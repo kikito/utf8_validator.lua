@@ -26,7 +26,10 @@ local utf_validator = {
     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   ]]
-
 }
+
+function utf_validator.getEncoding(str)
+  return 'ascii'
+end
 
 return utf_validator
