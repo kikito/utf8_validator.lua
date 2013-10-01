@@ -1,25 +1,22 @@
-utf_validator.lua
+utf8_validator.lua
 =================
 
-This Lua library can be used to validate UTF strings.
+This Lua function can be used to validate UTF-8 strings.
 
 Usage:
 
-    local utf_validator = require 'utf_validator'
+    local utf8_validator = require 'utf8_validator'
 
-    local is_valid             = utf_validator.validate('This is valid')
-    local encoding, endianness = utf_validator.getEncoding('some string')
+    local is_valid  = utf_validator.validate('This is valid')
 
-`utf_validator.validate` returns `true` or `false`.
+    -- you can also use the shortcut syntax:
+    local is_valid2 = utf_validator('This is also valid')
 
-`encoding` can be `'ascii'`, `'utf-8'`, `'utf-16'`, `'utf-32'` or `'unknown'`.
-
-`endianness` can be `'little'`, `'big'` or `nil`.
 
 Installation
 ============
 
-Just copy the `utf_validator.lua` file wherever you need it and `require` it.
+Just copy the `utf8_validator.lua` file wherever you need it and `require` it.
 
 License
 =======
