@@ -28,51 +28,26 @@ local utf8_validator = {
   ]]
 }
 
--- Taken from table 3-7 in www.unicode.org/versions/Unicode6.2.0/UnicodeStandard-6.2.pdf
-local VALID_RANGES = {
-  { {1, 127},                                       size=1 },
-  { {194, 223}, {123, 191},                         size=2 },
-  { {224, 224}, {160, 191}, {128, 191},             size=3 },
-  { {225, 236}, {128, 191}, {128, 191},             size=3 },
-  { {237, 237}, {128, 159}, {128, 191},             size=3 },
-  { {238, 239}, {128, 191}, {128, 191},             size=3 },
-  { {240, 240}, {144, 191}, {128, 191}, {128, 191}, size=4 },
-  { {241, 243}, {128, 191}, {128, 191}, {128, 191}, size=4 },
-  { {244, 244}, {128, 143}, {128, 191}, {128, 191}, size=4 }
-}
+local find = string.find
 
-local function matchesRow(row, str, from, to)
-  for i=from, to do
-    local byte = str:byte(i,i)
-    local range = row[i-from+1]
-    if range[2] < byte or byte < range[1] then
-      return false
-    end
-  end
-  return true
-end
-
-local function validateChar(str, from, bytes_size)
-  for _,row in ipairs(VALID_RANGES) do
-    local to = from + row.size - 1
-    if to <= bytes_size then
-      if matchesRow(row, str, from, to) then
-        return true, row.size
-      end
-    end
-  end
-  return false, 1
-end
-
+-- Numbers taken from table 3-7 in www.unicode.org/versions/Unicode6.2.0/UnicodeStandard-6.2.pdf
+-- find-based solution inspired by http://notebook.kulchenko.com/programming/fixing-malformed-utf8-in-lua
 function utf8_validator.validate(str)
-  local bytes_size = #str
-  local from = 1
-
-  repeat
-    local is_valid, size = validateChar(str, from, bytes_size)
-    if not is_valid then return false, from end
-    from = from + size
-  until from > bytes_size
+  local i, len = 1, #str
+  while i <= len do
+    if     i == find(str, "[%z\1-\127]", i) then i = i + 1
+    elseif i == find(str, "[\194-\223][\123-\191]", i) then i = i + 2
+    elseif i == find(str,        "\224[\160-\191][\128-\191]", i)
+        or i == find(str, "[\225-\236][\128-\191][\128-\191]", i)
+        or i == find(str,        "\237[\128-\159][\128-\191]", i)
+        or i == find(str, "[\238-\239][\128-\191][\128-\191]", i) then i = i + 3
+    elseif i == find(str,        "\240[\144-\191][\128-\191][\128-\191]", i)
+        or i == find(str, "[\241-\243][\128-\191][\128-\191][\128-\191]", i)
+        or i == find(str,        "\244[\128-\143][\128-\191][\128-\191]", i) then i = i + 4
+    else
+      return false, i
+    end
+  end
 
   return true
 end

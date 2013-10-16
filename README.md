@@ -12,6 +12,13 @@ Usage:
     -- you can also use the shortcut syntax:
     local is_valid2 = utf_validator('This is also valid')
 
+If a string is not valid utf8, then `validate` will also return the position of the first byte that makes it non-valid:
+
+    local is_valid, error_position = utf_validator(a_binary_blob)
+    if not is_valid then print('non-utf8 sequence detected at position ' .. tostring(error_position))
+
+For valid utf8 strings, `error_position` is always `nil`.
+
 
 Installation
 ============
