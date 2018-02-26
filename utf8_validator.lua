@@ -1,5 +1,5 @@
 local utf8_validator = {
-  __VERSION     = '0.0.1',
+  __VERSION     = '0.0.2',
   __DESCRIPTION = 'Library for easily validating UTF-8 strings in pure Lua',
   __URL         = 'https://github.com/kikito/utf8_validator.lua',
   __LICENSE     = [[
@@ -36,7 +36,7 @@ function utf8_validator.validate(str)
   local i, len = 1, #str
   while i <= len do
     if     i == find(str, "[%z\1-\127]", i) then i = i + 1
-    elseif i == find(str, "[\194-\223][\123-\191]", i) then i = i + 2
+    elseif i == find(str, "[\194-\223][\128-\191]", i) then i = i + 2
     elseif i == find(str,        "\224[\160-\191][\128-\191]", i)
         or i == find(str, "[\225-\236][\128-\191][\128-\191]", i)
         or i == find(str,        "\237[\128-\159][\128-\191]", i)
